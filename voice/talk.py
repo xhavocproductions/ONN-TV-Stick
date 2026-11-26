@@ -25,7 +25,8 @@ except ImportError:  # not on Windows
     winsound = None
 
 REPO = Path(__file__).resolve().parent.parent
-ALLOWED_TOOLS = "Bash(adb *),Bash(adb.exe *),Read,Edit,Write"
+BOX = "192.168.1.65:5555"
+ALLOWED_TOOLS ="Bash(adb *),Bash(adb.exe *),Read,Edit,Write"
 # Speech-to-text often mishears "Claude", so accept the usual variants.
 WAKE_ALIASES = {"claude": ["claude", "claud", "cloud", "clyde", "clod", "clawed"]}
 EXIT_PHRASES = {"goodbye", "good bye", "stop listening"}
@@ -152,7 +153,8 @@ def main():
     claude = shutil.which("claude")
     if not claude:
         sys.exit("Claude Code isn't on PATH. Install it and sign in first (see voice/README.md).")
-    env = dict(os.environ)
+    # Pin every adb command to the TV box, even if a phone is also attached.
+    env = dict(os.environ, ANDROID_SERIAL=BOX)
     wake = args.wake.strip().lower()
     pattern = wake_pattern(wake)
     transcribe = Transcriber(args.stt, args.model)

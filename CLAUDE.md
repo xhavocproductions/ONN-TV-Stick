@@ -21,6 +21,8 @@ If the IP changes, check it on the box: Settings → Network & Internet → Wi-F
 
 Run adb as plain `adb` (it is on PATH), never by full path.
 
+A phone (serial `R3CX702WQPP`, wireless debugging) can also show up in `adb devices`. Always target the box: `adb -s 192.168.1.65:5555 ...`, or set `ANDROID_SERIAL=192.168.1.65:5555` (the voice wrapper does). Never run device commands without one of these.
+
 ## Goals
 
 - Lean, fast and efficient: no ads, nothing unnecessary.
