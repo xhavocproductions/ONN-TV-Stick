@@ -85,7 +85,8 @@ class Transcriber:
                 return ""
         raw = audio.get_raw_data(convert_rate=16000, convert_width=2)
         pcm = np.frombuffer(raw, np.int16).astype(np.float32) / 32768
-        segments, _ = self.model.transcribe(pcm, language="en", vad_filter=True)
+        segments, _ = self.model.transcribe(pcm, language="en", vad_filter=True,
+                                            initial_prompt="Talking to Claude about the TV box.")
         return " ".join(s.text.strip() for s in segments).strip()
 
 
@@ -93,7 +94,8 @@ def wake_pattern(wake):
     if not wake:
         return None
     names = "|".join(map(re.escape, WAKE_ALIASES.get(wake, [wake])))
-    return re.compile(rf"^\W*(?:(?:hey|ok|okay)\W+)?(?:{names})\b\W*", re.I)
+    # Allow up to two words before the name ("hey Claude", "in the cloud" mishears).
+    return re.compile(rf"^\W*(?:[\w']+\W+){{0,2}}?(?:{names})\b\W*", re.I)
 
 
 def strip_wake(text, pattern):
@@ -174,7 +176,7 @@ def main():
             audio = rec.listen(mic, phrase_time_limit=args.max_phrase)
         started = time.monotonic() - len(audio.frame_data) / (audio.sample_rate * audio.sample_width)
         heard = transcribe(rec, audio)
-        if not heard:
+        if not normalized(heard):  # nothing but silence or punctuation
             continue
 
         request = strip_wake(heard, pattern)
