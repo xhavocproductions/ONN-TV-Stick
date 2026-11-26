@@ -1,4 +1,4 @@
 @echo off
 cd /d "%~dp0"
-py talk.py %*
+py -3.12 talk.py %*
 pause
