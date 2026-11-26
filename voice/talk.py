@@ -26,7 +26,7 @@ except ImportError:  # not on Windows
 
 REPO = Path(__file__).resolve().parent.parent
 SCRCPY = Path(os.environ.get("USERPROFILE", "~")).expanduser() / "scrcpy"
-ALLOWED_TOOLS = "Bash(adb *),Read,Edit,Write"
+ALLOWED_TOOLS = "Bash(adb *),Bash(adb.exe *),Read,Edit,Write"
 # Speech-to-text often mishears "Claude", so accept the usual variants.
 WAKE_ALIASES = {"claude": ["claude", "claud", "cloud", "clyde", "clod", "clawed"]}
 EXIT_PHRASES = {"goodbye", "good bye", "stop listening"}
@@ -39,7 +39,11 @@ VOICE_PROMPT = (
     "Describe commands and package names in words instead of reading them out, unless asked. "
     "Before running any command that changes the TV box or its settings, say what you will do "
     "and ask; run it only after the user says yes in their next message. "
-    "Speech-to-text can mishear, so if a request is unclear or sounds risky, ask first."
+    "Speech-to-text can mishear, so if a request is unclear or sounds risky, ask first. "
+    "adb is on PATH: run it with the Bash tool as plain adb, never by full path, "
+    "never through PowerShell, and one adb command per call. "
+    "The user cannot approve permission prompts in this mode, so never ask them to; "
+    "if a command is blocked, say which one."
 )
 
 SPEAK_PS = (
@@ -139,6 +143,8 @@ def ask_claude(claude, text, session_id, env):
     except json.JSONDecodeError:
         err = (r.stderr or r.stdout).strip()
         return (err[-500:] if err else "Claude Code returned nothing."), session_id
+    for d in data.get("permission_denials") or []:
+        print(f"(blocked: {d.get('tool_name')} {json.dumps(d.get('tool_input'))})")
     return str(data.get("result", "")).strip(), data.get("session_id") or session_id
 
 

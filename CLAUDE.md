@@ -19,6 +19,8 @@ adb devices
 
 If the IP changes, check it on the box: Settings → Network & Internet → Wi-Fi network.
 
+Run adb as plain `adb` (the scrcpy folder is on PATH), never by full path.
+
 ## Goals
 
 - Lean, fast and efficient: no ads, nothing unnecessary.
