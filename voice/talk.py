@@ -173,7 +173,7 @@ def main():
         request = strip_wake(heard, pattern)
         if request is None:
             if pattern and started > window_until:
-                print(f"(ignored: {heard})")
+                print(f'(ignored, say "{wake}" first: {heard})')
                 continue
             if normalized(heard) in NOISE_PHRASES:
                 continue
@@ -183,10 +183,11 @@ def main():
         if normalized(request) in EXIT_PHRASES:
             speak("Bye.")
             return
-        beep()
-        if not request.strip():  # just the wake word: wait for the actual request
+        if not request.strip():  # just the wake word: prompt for the actual request
+            speak("Yes?")
             window_until = time.monotonic() + args.window
             continue
+        beep()
 
         print("Thinking...")
         reply, session_id = ask_claude(claude, request, session_id, env)
