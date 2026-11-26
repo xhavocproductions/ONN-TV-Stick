@@ -25,7 +25,6 @@ except ImportError:  # not on Windows
     winsound = None
 
 REPO = Path(__file__).resolve().parent.parent
-SCRCPY = Path(os.environ.get("USERPROFILE", "~")).expanduser() / "scrcpy"
 ALLOWED_TOOLS = "Bash(adb *),Bash(adb.exe *),Read,Edit,Write"
 # Speech-to-text often mishears "Claude", so accept the usual variants.
 WAKE_ALIASES = {"claude": ["claude", "claud", "cloud", "clyde", "clod", "clawed"]}
@@ -153,7 +152,7 @@ def main():
     claude = shutil.which("claude")
     if not claude:
         sys.exit("Claude Code isn't on PATH. Install it and sign in first (see voice/README.md).")
-    env = dict(os.environ, PATH=f"{SCRCPY}{os.pathsep}{os.environ.get('PATH', '')}")
+    env = dict(os.environ)
     wake = args.wake.strip().lower()
     pattern = wake_pattern(wake)
     transcribe = Transcriber(args.stt, args.model)

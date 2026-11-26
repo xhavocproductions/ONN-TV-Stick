@@ -8,7 +8,7 @@ Working notes for reprogramming the Onn box live over ADB.
 - Connected to an RCA flat-screen TV by HDMI. HDMI-CEC is on, so the Onn remote controls TV power.
 - A Telus cable box sits on a second HDMI input.
 - Box IP on home Wi-Fi: `192.168.1.65` (port `5555`). Developer options and USB debugging are on.
-- Controlling computer: Windows laptop with scrcpy in `%USERPROFILE%\scrcpy` (`adb.exe` is in the same folder). A `TV Mouse.bat` desktop shortcut runs scrcpy with mouse and keyboard capture (left Alt releases).
+- Controlling computer: Windows 10 laptop. adb comes from Google Platform Tools (installed with winget, on PATH). scrcpy was not found on this laptop; reinstall with `winget install -e --id Genymobile.scrcpy` if screen mirroring is needed.
 
 ## Connecting
 
@@ -19,7 +19,7 @@ adb devices
 
 If the IP changes, check it on the box: Settings → Network & Internet → Wi-Fi network.
 
-Run adb as plain `adb` (the scrcpy folder is on PATH), never by full path.
+Run adb as plain `adb` (it is on PATH), never by full path.
 
 ## Goals
 
